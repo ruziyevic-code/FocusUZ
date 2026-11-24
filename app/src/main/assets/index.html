@@ -32,11 +32,258 @@ nav span{display:block;font-size:25px;margin-bottom:5px}
 input{background:#1b2820;border:1px solid #34453a;color:white;border-radius:12px;padding:12px;min-width:0}
 .bar{height:6px;background:#34453a;border-radius:8px;overflow:hidden}
 .fill{height:100%;background:#91e8ac;transition:width .4s}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+}
+* {
+    box-sizing: border-box;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+}
+header {
+    flex-shrink: 0;
+    padding: 16px 20px 10px;
+}
+main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px 20px 12px;
+    overscroll-behavior: contain;
+}
+nav {
+    position: relative;
+    flex-shrink: 0;
+    bottom: auto;
+    padding: 12px 4px 16px;
+}
+nav button {
+    flex: 1;
+    min-width: 0;
+}
+.timer {
+    width: clamp(155px, 30dvh, 235px);
+    height: clamp(155px, 30dvh, 235px);
+    margin: 18px auto;
+}
+.time {
+    font-size: clamp(38px, 7dvh, 54px);
+}
+.panel {
+    margin-bottom: 10px;
+}
+
+nav {
+    gap: 5px;
+    padding: 8px 10px 14px;
+    background: #151f18;
+}
+nav button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 2px;
+    border: none;
+    border-radius: 15px;
+    background: transparent;
+    color: #a2b5a8;
+    font-size: 11px;
+    transition: background .2s, color .2s;
+}
+nav button.active {
+    background: #23392b;
+    color: #91e8ac;
+}
+nav button:active {
+    opacity: .75;
+}
+
+.task-action {
+    background:transparent;
+    color:#a2b5a8;
+    border:none;
+    font-size:20px;
+    padding:8px;
+    min-width:34px;
+}
+.history-toggle {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    background:#1b2820;
+    color:#edf8ef;
+    border:none;
+    border-radius:14px;
+    padding:16px;
+}
+.history-panel {
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    visibility:hidden;
+    transition:grid-template-rows .35s,opacity .35s,visibility .35s;
+}
+.history-panel.opened {
+    grid-template-rows:1fr;
+    opacity:1;
+    visibility:visible;
+}
+.history-inner {
+    min-height:0;
+    overflow:hidden;
+}
+
+.timer {
+    position: relative;
+    isolation: isolate;
+    border: none;
+    background: #151f18;
+    box-shadow: 0 0 35px #91e8ac12;
+}
+.timer-ring {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+.timer-ring .ring-progress {
+    transition: stroke-dashoffset .8s linear;
+}
+.time {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -2px;
+}
+
+.usage-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px 10px;
+    margin-bottom:8px;
+    background:#1b2820;
+    border-radius:14px;
+}
+.app-symbol {
+    width:42px;
+    height:42px;
+    flex-shrink:0;
+    display:grid;
+    place-items:center;
+    background:#304638;
+    color:#91e8ac;
+    font-size:21px;
+    font-weight:600;
+    border-radius:12px;
+}
+.history-toggle {
+    margin-top:10px;
+}
+
+.rest-grid {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin-bottom:12px;
+}
+.rest-grid button {
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:7px;
+    text-align:left;
+    background:#1b2820;
+    color:#edf8ef;
+    border:1px solid #304638;
+    border-radius:15px;
+    padding:13px;
+    transition:transform .2s,background .2s;
+}
+.rest-grid button:active {
+    transform:scale(.96);
+    background:#304638;
+}
+.rest-grid span {
+    font-size:24px;
+    color:#91e8ac;
+}
+.rest-grid small {
+    color:#a2b5a8;
+    font-size:11px;
+}
+#restTipBox:not([hidden]) {
+    animation:restAppear .3s ease;
+}
+@keyframes restAppear {
+    from {opacity:0;transform:translateY(6px)}
+    to {opacity:1;transform:translateY(0)}
+}
+
+.setting-row {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px 0;
+}
+.switch {
+    appearance:none;
+    width:46px;
+    height:26px;
+    flex-shrink:0;
+    background:#45534a;
+    border:none;
+    border-radius:30px;
+    position:relative;
+    padding:0;
+    transition:background .25s;
+}
+.switch:checked {
+    background:#91e8ac;
+}
+.switch::after {
+    content:'';
+    position:absolute;
+    width:20px;
+    height:20px;
+    left:3px;
+    top:3px;
+    background:#edf8ef;
+    border-radius:50%;
+    transition:transform .25s;
+}
+.switch:checked::after {
+    transform:translateX(20px);
+}
+select {
+    background:#304638;
+    color:#edf8ef;
+    border:none;
+    padding:10px;
+    border-radius:10px;
+}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">◎</div>
+<svg width="48" height="48" viewBox="0 0 120 120">
+<rect width="120" height="120" rx="28" fill="#91e8ac"/>
+<circle cx="60" cy="60" r="34" stroke="#101612" stroke-width="6" fill="none" stroke-dasharray="185 30" transform="rotate(-90 60 60)"/>
+<path d="M49 43 H75 M49 43 V78 M49 59 H68" stroke="#101612" stroke-width="7" stroke-linecap="round" fill="none"/>
+</svg>
 <div style="flex:1">
 <strong style="font-size:24px">FocusUZ</strong><br>
 <small>Diqqat. Intizom. Natija.</small>
@@ -45,11 +292,34 @@ input{background:#1b2820;border:1px solid #34453a;color:white;border-radius:12px
 </header>
 <main id="page"></main>
 <nav>
-<button data-tab="focus" onclick="openTab('focus')"><span>◷</span>Fokus</button>
-<button data-tab="tasks" onclick="openTab('tasks')"><span>☑</span>Vazifalar</button>
-<button data-tab="stats" onclick="openTab('stats')"><span>▥</span>Statistika</button>
-<button data-tab="rest" onclick="openTab('rest')"><span>☕</span>Dam olish</button>
-</nav>
+    <button data-tab="focus" onclick="openTab('focus')">
+    <svg viewBox="0 0 24 24" width="25" height="25"
+    fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6M12 2v3"/></svg>
+    <span>Fokus</span>
+    </button>
+    <button data-tab="tasks" onclick="openTab('tasks')">
+    <svg viewBox="0 0 24 24" width="25" height="25"
+    fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round">
+    <rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8 12 3 3 5-6"/></svg>
+    <span>Vazifalar</span>
+    </button>
+    <button data-tab="stats" onclick="openTab('stats')">
+    <svg viewBox="0 0 24 24" width="25" height="25"
+    fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 20h16M6 16v-5M12 16V5M18 16V9"/></svg>
+    <span>Statistika</span>
+    </button>
+    <button data-tab="rest" onclick="openTab('rest')">
+    <svg viewBox="0 0 24 24" width="25" height="25"
+    fill="none" stroke="currentColor" stroke-width="1.8"
+    stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 8h14v5a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6zM17 9h2a3 3 0 0 1 0 6h-2M7 2v3M12 2v3"/></svg>
+    <span>Dam olish</span>
+    </button></nav>
 <script>
 let tab='focus';
 let duration={focus:25,rest:5};
@@ -87,25 +357,15 @@ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b
 let h='';
 if(tab==='focus'||tab==='rest'){
 let r=tab==='rest';
-h=r?'<h2>Dam olish</h2><small>Diqqatni tiklash uchun tanaffus.</small>':'<div class="panel"><small>BUGUNGI MAQSAD</small><h3 style="margin:8px 0">60 daqiqa fokus</h3><div class="bar"><div class="fill" style="width:'+Math.min(100,focusMinutes/60*100)+'%"></div></div><small>'+focusMinutes+' / 60 daqiqa</small></div>';
+h=r?'<h2>Dam olish</h2><small>Diqqatni tiklash uchun tanaffus.</small>':'<div class="panel"><small>BUGUNGI MAQSAD</small><h3 style="margin:8px 0">'+getGoal()+' daqiqa fokus</h3><div class="bar"><div class="fill" style="width:'+Math.min(100,dailyFocus()/getGoal()*100)+'%"></div></div><small>'+dailyFocus()+' / '+getGoal()+' daqiqa</small></div>';
 h+='<div class="timer"><small>'+(r?'TANAFFUS':'FOKUS VAQTI')+'</small><div class="time" id="clock">'+clock(remaining[tab])+'</div><small>'+(end[tab]?'Davom etmoqda':'Boshlashga tayyor')+'</small></div>';
 h+='<div class="segments">'+(r?[5,10,15]:[15,25,45,60]).map(n=>'<button class="'+(duration[tab]===n?'active':'')+'" onclick="choose('+n+')">'+n+' min</button>').join('')+'</div>';
 h+='<button class="primary" onclick="start()">'+(end[tab]?'Ⅱ Pauza':'▷ Boshlash')+'</button><button onclick="reset()" style="background:none;width:100%;padding:16px">↻ Qayta boshlash</button>';
-if(r)h+='<div class="panel"><h3>Tanaffus uchun tavsiyalar</h3><p>Suv ichish</p><p>Biroz yurish</p><p>Ko‘zlarni dam oldirish</p></div>';
+if(r)h+=restActivities();
 }
-else if(tab==='tasks'){
-let total=tasks.length+done;
-h='<h2>Bugungi vazifalar</h2><div class="panel">Bajarildi <strong id="count" style="float:right;color:#91e8ac">'+done+'/'+total+'</strong><br><br><div class="bar"><div id="progress" class="fill" style="width:'+(total?done/total*100:0)+'%"></div></div></div>';
-h+=tasks.map(t=>'<div class="task" id="task'+t.id+'"><button class="check" onclick="complete('+t.id+',this)"></button><div style="flex:1">'+escapeText(t.name)+'</div><button style="background:none" onclick="removeTask('+t.id+')">×</button></div>').join('');
-if(!tasks.length)h+='<p style="text-align:center;color:#91e8ac">'+(done?'✓ Barcha vazifalar bajarildi!':'Yangi vazifa qo‘shing')+'</p>';
-h+='<div style="display:flex;gap:8px"><input id="newtask" placeholder="Yangi vazifa..." style="flex:1"><button onclick="addTask()" style="background:#91e8ac;color:#102016;border-radius:12px;width:45px;font-size:24px">+</button></div>';
-}
-else if(tab==='stats'){
-h='<h2>Statistika</h2><div class="panel"><small>FOKUS VAQTI</small><h1 style="color:#91e8ac">'+focusMinutes+' daqiqa</h1></div><div class="panel">Fokus seanslari <strong style="float:right">'+sessions+'</strong></div><div class="panel">Bajarilgan vazifalar <strong style="float:right">'+done+'</strong></div><div class="panel"><h3>Raqamli salomatlik</h3><small>Telefon statistikasi keyingi bosqichda ulanadi.</small></div>';
-}
-else{
-h='<h2>Sozlamalar</h2><div class="panel">Ilova tili: O‘zbekcha</div><div class="panel">Dizayn: Qorong‘i</div><small>FocusUZ 2.0</small>';
-}
+else if(tab==='tasks'){h=taskPage();}
+else if(tab==='stats'){h=statsPage();}
+else{h=settingsPage();}
 document.getElementById('page').innerHTML=h;
 }
 
@@ -165,14 +425,237 @@ if(tab==='tasks'&&!tasks.length)render();
 },700);
 }
 
+
+let historyOpen = false;
+let historyItems = JSON.parse(localStorage.getItem('completedTasks') || '[]');
+
+function storeHistory(){
+    localStorage.setItem('completedTasks',JSON.stringify(historyItems));
+    save();
+}
+
+function toggleHistory(){
+    historyOpen = !historyOpen;
+    document.getElementById('historyPanel').classList.toggle('opened',historyOpen);
+    document.getElementById('historyArrow').textContent=historyOpen?'⌃':'⌄';
+}
+
+function editTask(id){
+    let t=tasks.find(x=>x.id===id);
+    if(!t)return;
+    let n=prompt('Vazifani tahrirlash',t.name);
+    if(n && n.trim()){
+        t.name=n.trim();
+        save();
+        render();
+    }
+}
+
+function deleteTask(id){
+    if(!confirm('Vazifa o‘chirilsinmi?'))return;
+    tasks=tasks.filter(t=>t.id!==id);
+    save();
+    render();
+}
+
+function restoreTask(id){
+    let t=historyItems.find(x=>x.id===id);
+    if(!t)return;
+    tasks.push({id:t.id,name:t.name});
+    historyItems=historyItems.filter(x=>x.id!==id);
+    done=Math.max(0,done-1);
+    storeHistory();
+    render();
+}
+
+function deleteHistory(id){
+    if(!confirm('Tarixdan o‘chirilsinmi?'))return;
+    historyItems=historyItems.filter(x=>x.id!==id);
+    storeHistory();
+    render();
+}
+
+function complete(id,b){
+    let t=tasks.find(x=>x.id===id);
+    if(!t || b.disabled)return;
+    b.disabled=true;
+    b.classList.add('done');
+    b.textContent='✓';
+    historyItems.unshift({id:t.id,name:t.name,date:Date.now()});
+    tasks=tasks.filter(x=>x.id!==id);
+    done++;
+    storeHistory();
+    let row=document.getElementById('task'+id);
+    setTimeout(()=>{if(row)row.classList.add('hide');},250);
+    setTimeout(()=>{if(tab==='tasks')render();},700);
+}
+
+function taskPage(){
+    let total=tasks.length+done;
+    let percent=total?Math.round(done/total*100):0;
+
+    let h=`<h2>Bugungi vazifalar</h2>
+    <div class="panel">
+    <small>KUNLIK NATIJA</small>
+    <h1 style="color:#91e8ac">${percent}%</h1>
+    <div class="bar"><div class="fill" style="width:${percent}%"></div></div>
+    <small>${done}/${total} bajarildi</small>
+    </div>`;
+
+    tasks.forEach(t=>{
+        h+=`<div class="task" id="task${t.id}">
+        <button class="check" onclick="complete(${t.id},this)"></button>
+        <div style="flex:1;overflow-wrap:anywhere">${escapeText(t.name)}</div>
+        <button class="task-action" onclick="editTask(${t.id})">✎</button>
+        <button class="task-action" onclick="deleteTask(${t.id})">×</button>
+        </div>`;
+    });
+
+    h+=`<div style="display:flex;gap:8px;margin:14px 0">
+    <input id="newtask" placeholder="Yangi vazifa..." style="flex:1;min-width:0">
+    <button onclick="addTask()" style="background:#91e8ac;color:#101612;border-radius:12px;width:45px;font-size:24px">+</button>
+    </div>
+    <button class="history-toggle" onclick="toggleHistory()">
+    <span style="color:#91e8ac">◷</span>
+    <span style="flex:1;text-align:left">Bajarilgan vazifalar (${historyItems.length})</span>
+    <span id="historyArrow">${historyOpen?'⌃':'⌄'}</span>
+    </button>
+    <div id="historyPanel" class="history-panel ${historyOpen?'opened':''}">
+    <div class="history-inner">`;
+
+    historyItems.forEach(t=>{
+        h+=`<div class="task">
+        <span style="color:#91e8ac">✓</span>
+        <div style="flex:1;overflow-wrap:anywhere">${escapeText(t.name)}</div>
+        <button class="task-action" onclick="restoreTask(${t.id})">↶</button>
+        <button class="task-action" onclick="deleteHistory(${t.id})">×</button>
+        </div>`;
+    });
+
+    if(!historyItems.length){
+        h+='<p><small>Hozircha tarix bo‘sh</small></p>';
+    }
+
+    return h+'</div></div>';
+}
+
+
+let statsDays = 1;
+let showAllApps = false;
+
+function changePeriod(days){
+    statsDays = days;
+    showAllApps = false;
+    render();
+}
+
+function toggleApps(){
+    showAllApps = !showAllApps;
+    render();
+}
+
+function formatTime(seconds){
+    let h = Math.floor(seconds/3600);
+    let m = Math.floor(seconds%3600/60);
+    return h ? h+' soat '+m+' min' :
+        m ? m+' min' : seconds+' sek';
+}
+
+function statsPage(){
+    let h = `<h2>Statistika</h2>
+    <div class="segments">
+    ${[[1,'Bugun'],[7,'7 kun'],[30,'30 kun']].map(x=>
+        `<button class="${statsDays===x[0]?'active':''}"
+        onclick="changePeriod(${x[0]})">${x[1]}</button>`
+    ).join('')}
+    </div>`;
+
+    let allowed = false;
+    let apps = [];
+
+    try {
+        allowed = typeof FocusAndroid !== 'undefined'
+            && FocusAndroid.hasPermission();
+
+        if(allowed){
+            apps = JSON.parse(FocusAndroid.getStats(statsDays));
+        }
+    } catch(e){}
+
+    if(!allowed){
+        h += `<div class="panel">
+        <h3>Telefon statistikasi</h3>
+        <p>Ilovalardan foydalanish vaqtini ko‘rish uchun ruxsat bering.</p>
+        <button class="primary"
+        onclick="if(typeof FocusAndroid!=='undefined')FocusAndroid.openPermission()">
+        Ruxsat berish</button>
+        <button class="history-toggle" onclick="render()">
+        Yangilash</button>
+        </div>`;
+    } else {
+        let total = apps.reduce((a,b)=>a+b.seconds,0);
+        let max = Math.max(1,...apps.map(a=>a.seconds));
+
+        h += `<div class="panel" style="margin-top:14px">
+        <small>ILOVALARDAN FOYDALANISH</small>
+        <h1 style="color:#91e8ac">${formatTime(total)}</h1>
+        <small>${apps.length} ta ilova</small>
+        </div>
+        <h3>Eng ko‘p ishlatilgan ilovalar</h3>`;
+
+        let visible = showAllApps ? apps : apps.slice(0,5);
+
+        visible.forEach(a=>{
+            h += `<div class="usage-row">
+            <div class="app-symbol">
+            ${escapeText(a.name.charAt(0).toUpperCase())}
+            </div>
+            <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+            <span style="overflow-wrap:anywhere">${escapeText(a.name)}</span>
+            <small>${formatTime(a.seconds)}</small>
+            </div>
+            <div class="bar" style="margin-top:8px">
+            <div class="fill" style="width:${a.seconds/max*100}%"></div>
+            </div></div></div>`;
+        });
+
+        if(!apps.length){
+            h += '<div class="panel">Hozircha ma’lumot yo‘q.</div>';
+        }
+
+        if(apps.length>5){
+            h += `<button class="history-toggle"
+            onclick="toggleApps()">
+            ${showAllApps?'Yopish ⌃':'Barcha ilovalarni ko‘rish ⌄'}
+            </button>`;
+        }
+
+        h += `<button class="history-toggle"
+        onclick="render()">↻ Yangilash</button>`;
+    }
+
+    h += `<h3>Umumiy fokus natijalari</h3>
+    <div class="panel">
+    <small>FOKUS VAQTI</small>
+    <h2 style="color:#91e8ac">${focusMinutes} daqiqa</h2>
+    </div>
+    <div class="panel">Fokus seanslari
+    <strong style="float:right">${sessions}</strong></div>
+    <div class="panel">Bajarilgan vazifalar
+    <strong style="float:right">${done}</strong></div>`;
+
+    return h;
+}
+
 setInterval(()=>{
 ['focus','rest'].forEach(k=>{
 if(end[k]){
 remaining[k]=Math.max(0,Math.ceil((end[k]-Date.now())/1000));
-if(!remaining[k]){
+if(!remaining[k]){finishAlert();
 end[k]=0;
 if(k==='focus'){
-focusMinutes+=duration[k];
+focusMinutes+=duration[k];addDailyFocus(duration[k]);
 sessions++;
 save();
 }
@@ -184,6 +667,152 @@ let c=document.getElementById('clock');
 if(c)c.textContent=clock(remaining[tab]);
 },250);
 render();
+
+function updateTimerRing(){
+    let timer = document.querySelector('.timer');
+    if(!timer || !remaining[tab] && !duration[tab]) return;
+
+    if(!timer.querySelector('.timer-ring')){
+        timer.insertAdjacentHTML('afterbegin',`
+        <svg class="timer-ring" viewBox="0 0 240 240">
+        <circle cx="120" cy="120" r="113"
+        fill="none" stroke="#304638" stroke-width="7"/>
+        <circle class="ring-progress"
+        cx="120" cy="120" r="113"
+        fill="none" stroke="#91e8ac"
+        stroke-width="7" stroke-linecap="round"
+        stroke-dasharray="710"
+        transform="rotate(-90 120 120)"/>
+        </svg>`);
+    }
+
+    let ring = timer.querySelector('.ring-progress');
+    let ratio = Math.max(0,Math.min(1,
+        remaining[tab]/(duration[tab]*60)
+    ));
+    ring.style.strokeDashoffset = 710*(1-ratio);
+}
+
+setInterval(updateTimerRing,200);
+
+function restActivities(){
+    return `<h3>Dam olish mashg‘ulotlari</h3>
+    <div class="rest-grid">
+    <button onclick="restTip(0)">
+    <span>💧</span><strong>Suv ichish</strong>
+    <small>Qisqa tanaffus</small></button>
+    <button onclick="restTip(1)">
+    <span>🚶</span><strong>Sayr qilish</strong>
+    <small>Biroz harakat</small></button>
+    <button onclick="restTip(2)">
+    <span>◎</span><strong>Ko‘zlarga dam</strong>
+    <small>Ekrandan uzoqlashish</small></button>
+    <button onclick="restTip(3)">
+    <span>☁</span><strong>Erkin nafas</strong>
+    <small>Xotirjamlik</small></button>
+    </div>
+    <div id="restTipBox" class="panel" hidden></div>`;
+}
+
+function restTip(i){
+    let tips = [
+        'Bir stakan suv ichib, biroz dam oling.',
+        'O‘rningizdan turib, qulay joyda biroz yuring.',
+        'Ekrandan uzoqlashing va uzoqdagi narsaga qarang.',
+        'Qulay o‘tiring va tabiiy, xotirjam nafas oling.'
+    ];
+    let box = document.getElementById('restTipBox');
+    box.hidden = false;
+    box.textContent = tips[i];
+}
+
+function finishAlert(){
+    let sound = localStorage.getItem('sound') !== 'false';
+    let vibration = localStorage.getItem('vibration') !== 'false';
+
+    try {
+        if(typeof FocusAndroid !== 'undefined'){
+            FocusAndroid.finishAlert(sound,vibration);
+        }
+    } catch(e){}
+}
+
+function getGoal(){
+    return Number(localStorage.getItem('focusGoal')) || 60;
+}
+
+function changeGoal(value){
+    localStorage.setItem('focusGoal',value);
+}
+
+function changeSetting(key,value){
+    localStorage.setItem(key,String(value));
+}
+
+function settingsPage(){
+    let sound=localStorage.getItem('sound')!=='false';
+    let vibration=localStorage.getItem('vibration')!=='false';
+
+    return `<h2>Sozlamalar</h2>
+
+    <div class="panel" style="text-align:center">
+    <h1 style="color:#91e8ac">FocusUZ</h1>
+    <small>Versiya 2.1</small>
+    </div>
+
+    <small>BILDIRISHNOMALAR</small>
+    <div class="panel">
+    <label class="setting-row">
+    <div>Ovoz<br><small>Taymer tugaganda</small></div>
+    <input class="switch" type="checkbox"
+    ${sound?'checked':''}
+    onchange="changeSetting('sound',this.checked)">
+    </label>
+    <label class="setting-row">
+    <div>Vibratsiya<br><small>Taymer yakunida</small></div>
+    <input class="switch" type="checkbox"
+    ${vibration?'checked':''}
+    onchange="changeSetting('vibration',this.checked)">
+    </label>
+    <button class="history-toggle" onclick="finishAlert()">
+    Ovoz va vibratsiyani sinash
+    </button>
+    </div>
+
+    <small>SHAXSIY MAQSAD</small>
+    <div class="panel setting-row">
+    <span>Kunlik fokus maqsadi</span>
+    <select onchange="changeGoal(this.value)">
+    ${[30,60,90,120,180].map(n=>
+    `<option value="${n}" ${getGoal()===n?'selected':''}>
+    ${n} min</option>`).join('')}
+    </select>
+    </div>
+
+    <small>ILOVA HAQIDA</small>
+    <div class="panel">
+    <p>Til: O‘zbekcha</p>
+    <p>Dizayn: Dark Premium</p>
+    <small>Ma’lumotlar telefonning o‘zida saqlanadi.</small>
+    </div>`;
+}
+
+function todayKey(){
+    let d = new Date();
+    return 'focusDay_' + d.getFullYear() + '_' +
+        (d.getMonth()+1) + '_' + d.getDate();
+}
+
+function dailyFocus(){
+    return Number(localStorage.getItem(todayKey()) || 0);
+}
+
+function addDailyFocus(minutes){
+    localStorage.setItem(
+        todayKey(),
+        dailyFocus() + minutes
+    );
+}
 </script>
 </body>
 </html>
