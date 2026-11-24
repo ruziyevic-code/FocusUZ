@@ -4,7 +4,6 @@ import android.accessibilityservice.AccessibilityService;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.util.Log;
-import java.util.Locale;
 
 public class FocusService extends AccessibilityService {
 
@@ -13,51 +12,42 @@ public class FocusService extends AccessibilityService {
         if (event == null || event.getPackageName() == null) return;
 
         String pkg = event.getPackageName().toString();
-        String target;
 
-        if (pkg.equals("com.google.android.youtube")) {
-            target = "shorts";
-        } else if (pkg.equals("com.instagram.android")) {
-            target = "reels";
-        } else {
-            return;
-        }
+        if (!pkg.equals("com.google.android.youtube")) return;
 
         AccessibilityNodeInfo root = getRootInActiveWindow();
         if (root == null) return;
 
-        boolean detected = containsTarget(root, target, 0);
+        boolean shorts = containsShorts(root, 0);
         root.recycle();
 
-        if (detected) {
-            Log.d("FocusUZ", target + " detected");
+        if (shorts) {
+            Log.d("FocusUZ", "YouTube Shorts belgisi aniqlandi");
         }
     }
 
-    private boolean containsTarget(AccessibilityNodeInfo node,
-                                   String target, int depth) {
+    private boolean containsShorts(AccessibilityNodeInfo node, int depth) {
         if (node == null || depth > 15) return false;
 
         CharSequence desc = node.getContentDescription();
 
-        if (node.isSelected() && desc != null &&
-            desc.toString().toLowerCase(Locale.ROOT).contains(target)) {
+        if (desc != null &&
+            desc.toString().toLowerCase().contains("shorts")) {
             return true;
         }
 
         for (int i = 0; i < node.getChildCount(); i++) {
             AccessibilityNodeInfo child = node.getChild(i);
-            if (child == null) continue;
 
-            boolean found = containsTarget(child, target, depth + 1);
-            child.recycle();
-
-            if (found) return true;
+            if (child != null && containsShorts(child, depth + 1)) {
+                return true;
+            }
         }
 
         return false;
     }
 
     @Override
-    public void onInterrupt() {}
+    public void onInterrupt() {
+    }
 }
