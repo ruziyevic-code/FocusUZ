@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FocusUZ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#101612;color:#edf8ef;font-family:system-ui,sans-serif}
+header{padding:24px 20px 12px;display:flex;align-items:center;gap:12px}
+.logo{background:#91e8ac;color:#102016;border-radius:12px;padding:10px;font-size:25px}
+h1,h2,h3,p{margin-top:0}
+small{color:#9aada0}
+main{padding:12px 20px 110px}
+.panel{background:#1b2820;border-radius:16px;padding:16px;margin:12px 0}
+button,input{font:inherit}
+button{cursor:pointer;border:0;color:inherit}
+.primary{background:#91e8ac;color:#102016;width:100%;padding:16px;border-radius:14px;font-weight:600}
+.segments{display:flex;gap:5px;background:#1b2820;border-radius:12px;padding:5px;margin:16px 0}
+.segments button{flex:1;background:transparent;padding:12px 4px;border-radius:9px;font-size:13px}
+.segments .active{background:#91e8ac;color:#102016}
+.timer{width:235px;height:235px;border:7px solid #91e8ac;border-radius:50%;margin:30px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#151f18}
+.time{font-size:54px;font-weight:600;font-variant-numeric:tabular-nums}
+nav{position:fixed;bottom:0;left:0;right:0;background:#101612;border-top:1px solid #34453a;display:flex;padding:15px 4px 20px}
+nav button{flex:1;background:none;color:#87978c;font-size:11px}
+nav button.active{color:#91e8ac}
+nav span{display:block;font-size:25px;margin-bottom:5px}
+.task{display:flex;align-items:center;gap:12px;background:#1b2820;border-radius:14px;padding:16px;margin:10px 0;max-height:100px;overflow:hidden;transition:opacity .45s,transform .45s,max-height .45s,padding .45s,margin .45s}
+.task.hide{opacity:0;transform:translateX(15px);max-height:0;padding-top:0;padding-bottom:0;margin:0}
+.check{width:26px;height:26px;border:1px solid #91e8ac;border-radius:8px;background:none;color:#102016}
+.check.done{background:#91e8ac}
+input{background:#1b2820;border:1px solid #34453a;color:white;border-radius:12px;padding:12px;min-width:0}
+.bar{height:6px;background:#34453a;border-radius:8px;overflow:hidden}
+.fill{height:100%;background:#91e8ac;transition:width .4s}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">◎</div>
+<div style="flex:1">
+<strong style="font-size:24px">FocusUZ</strong><br>
+<small>Diqqat. Intizom. Natija.</small>
+</div>
+<button onclick="openTab('settings')" style="background:none;font-size:26px">⚙</button>
+</header>
+<main id="page"></main>
+<nav>
+<button data-tab="focus" onclick="openTab('focus')"><span>◷</span>Fokus</button>
+<button data-tab="tasks" onclick="openTab('tasks')"><span>☑</span>Vazifalar</button>
+<button data-tab="stats" onclick="openTab('stats')"><span>▥</span>Statistika</button>
+<button data-tab="rest" onclick="openTab('rest')"><span>☕</span>Dam olish</button>
+</nav>
+<script>
+let tab='focus';
+let duration={focus:25,rest:5};
+let remaining={focus:1500,rest:300};
+let end={focus:0,rest:0};
+let tasks=JSON.parse(localStorage.getItem('tasks')||'[]');
+let done=Number(localStorage.getItem('done')||0);
+let focusMinutes=Number(localStorage.getItem('focusMinutes')||0);
+let sessions=Number(localStorage.getItem('sessions')||0);
+
+function save(){
+localStorage.setItem('tasks',JSON.stringify(tasks));
+localStorage.setItem('done',done);
+localStorage.setItem('focusMinutes',focusMinutes);
+localStorage.setItem('sessions',sessions);
+}
+
+function escapeText(s){
+let d=document.createElement('div');
+d.textContent=s;
+return d.innerHTML;
+}
+
+function clock(s){
+return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+
+function openTab(t){
+tab=t;
+render();
+}
+
+function render(){
+document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+let h='';
+if(tab==='focus'||tab==='rest'){
+let r=tab==='rest';
+h=r?'<h2>Dam olish</h2><small>Diqqatni tiklash uchun tanaffus.</small>':'<div class="panel"><small>BUGUNGI MAQSAD</small><h3 style="margin:8px 0">60 daqiqa fokus</h3><div class="bar"><div class="fill" style="width:'+Math.min(100,focusMinutes/60*100)+'%"></div></div><small>'+focusMinutes+' / 60 daqiqa</small></div>';
+h+='<div class="timer"><small>'+(r?'TANAFFUS':'FOKUS VAQTI')+'</small><div class="time" id="clock">'+clock(remaining[tab])+'</div><small>'+(end[tab]?'Davom etmoqda':'Boshlashga tayyor')+'</small></div>';
+h+='<div class="segments">'+(r?[5,10,15]:[15,25,45,60]).map(n=>'<button class="'+(duration[tab]===n?'active':'')+'" onclick="choose('+n+')">'+n+' min</button>').join('')+'</div>';
+h+='<button class="primary" onclick="start()">'+(end[tab]?'Ⅱ Pauza':'▷ Boshlash')+'</button><button onclick="reset()" style="background:none;width:100%;padding:16px">↻ Qayta boshlash</button>';
+if(r)h+='<div class="panel"><h3>Tanaffus uchun tavsiyalar</h3><p>Suv ichish</p><p>Biroz yurish</p><p>Ko‘zlarni dam oldirish</p></div>';
+}
+else if(tab==='tasks'){
+let total=tasks.length+done;
+h='<h2>Bugungi vazifalar</h2><div class="panel">Bajarildi <strong id="count" style="float:right;color:#91e8ac">'+done+'/'+total+'</strong><br><br><div class="bar"><div id="progress" class="fill" style="width:'+(total?done/total*100:0)+'%"></div></div></div>';
+h+=tasks.map(t=>'<div class="task" id="task'+t.id+'"><button class="check" onclick="complete('+t.id+',this)"></button><div style="flex:1">'+escapeText(t.name)+'</div><button style="background:none" onclick="removeTask('+t.id+')">×</button></div>').join('');
+if(!tasks.length)h+='<p style="text-align:center;color:#91e8ac">'+(done?'✓ Barcha vazifalar bajarildi!':'Yangi vazifa qo‘shing')+'</p>';
+h+='<div style="display:flex;gap:8px"><input id="newtask" placeholder="Yangi vazifa..." style="flex:1"><button onclick="addTask()" style="background:#91e8ac;color:#102016;border-radius:12px;width:45px;font-size:24px">+</button></div>';
+}
+else if(tab==='stats'){
+h='<h2>Statistika</h2><div class="panel"><small>FOKUS VAQTI</small><h1 style="color:#91e8ac">'+focusMinutes+' daqiqa</h1></div><div class="panel">Fokus seanslari <strong style="float:right">'+sessions+'</strong></div><div class="panel">Bajarilgan vazifalar <strong style="float:right">'+done+'</strong></div><div class="panel"><h3>Raqamli salomatlik</h3><small>Telefon statistikasi keyingi bosqichda ulanadi.</small></div>';
+}
+else{
+h='<h2>Sozlamalar</h2><div class="panel">Ilova tili: O‘zbekcha</div><div class="panel">Dizayn: Qorong‘i</div><small>FocusUZ 2.0</small>';
+}
+document.getElementById('page').innerHTML=h;
+}
+
+function choose(n){
+duration[tab]=n;
+remaining[tab]=n*60;
+end[tab]=0;
+render();
+}
+
+function start(){
+if(end[tab]){
+remaining[tab]=Math.max(0,Math.ceil((end[tab]-Date.now())/1000));
+end[tab]=0;
+}else{
+if(!remaining[tab])remaining[tab]=duration[tab]*60;
+end[tab]=Date.now()+remaining[tab]*1000;
+}
+render();
+}
+
+function reset(){
+end[tab]=0;
+remaining[tab]=duration[tab]*60;
+render();
+}
+
+function addTask(){
+let v=document.getElementById('newtask').value.trim();
+if(!v)return;
+tasks.push({id:Date.now(),name:v});
+save();
+render();
+}
+
+function removeTask(id){
+tasks=tasks.filter(t=>t.id!==id);
+save();
+render();
+}
+
+function complete(id,b){
+if(b.disabled)return;
+b.disabled=true;
+b.classList.add('done');
+b.textContent='✓';
+tasks=tasks.filter(t=>t.id!==id);
+done++;
+save();
+document.getElementById('count').textContent=done+'/'+(done+tasks.length);
+document.getElementById('progress').style.width=100*done/(done+tasks.length)+'%';
+let row=document.getElementById('task'+id);
+setTimeout(()=>row.classList.add('hide'),250);
+setTimeout(()=>{
+row.remove();
+if(tab==='tasks'&&!tasks.length)render();
+},700);
+}
+
+setInterval(()=>{
+['focus','rest'].forEach(k=>{
+if(end[k]){
+remaining[k]=Math.max(0,Math.ceil((end[k]-Date.now())/1000));
+if(!remaining[k]){
+end[k]=0;
+if(k==='focus'){
+focusMinutes+=duration[k];
+sessions++;
+save();
+}
+if(tab===k)render();
+}
+}
+});
+let c=document.getElementById('clock');
+if(c)c.textContent=clock(remaining[tab]);
+},250);
+render();
+</script>
+</body>
+</html>
