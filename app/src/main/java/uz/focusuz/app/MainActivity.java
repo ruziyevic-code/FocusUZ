@@ -27,7 +27,38 @@ public class MainActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        androidx.core.splashscreen.SplashScreen splash =
+    androidx.core.splashscreen.SplashScreen.installSplashScreen(this);
+
+    super.onCreate(savedInstanceState);
+
+        if (android.os.Build.VERSION.SDK_INT >= 33) {
+            if (checkSelfPermission(
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(
+                    new String[]{
+                        android.Manifest.permission.POST_NOTIFICATIONS
+                    },
+                    301
+                );
+            }
+        }
+
+
+    splash.setOnExitAnimationListener(provider -> {
+        android.view.View view = provider.getView();
+        view.animate()
+            .translationY(-view.getHeight())
+            .alpha(0f)
+            .setDuration(350)
+            .setInterpolator(
+                new android.view.animation.DecelerateInterpolator()
+            )
+            .withEndAction(provider::remove)
+            .start();
+    });
 
         Window window = getWindow();
         window.setStatusBarColor(Color.parseColor("#101612"));

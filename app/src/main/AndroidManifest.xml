@@ -9,8 +9,11 @@
         </intent>
     </queries>
     
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <application android:icon="@drawable/focus_logo"
-        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:theme="@style/Theme.FocusUZ.Starting"
         android:label="FocusUZ">
         <activity
             android:name=".MainActivity"
@@ -21,6 +24,17 @@
             </intent-filter>
         </activity>
     
+
+    
+        <service
+            android:name=".service.FocusTimerService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User initiated focus countdown timer"/>
+        </service>
 
     </application>
 </manifest>
