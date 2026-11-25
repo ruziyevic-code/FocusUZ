@@ -71,6 +71,61 @@ public class MainActivity extends Activity {
     }
 
     public class StatsBridge {
+        @android.webkit.JavascriptInterface
+        public String getAppInfo(String pkg) {
+            try {
+                android.content.pm.PackageManager pm =
+                    getPackageManager();
+
+                android.content.pm.ApplicationInfo info =
+                    pm.getApplicationInfo(pkg, 0);
+
+                String name =
+                    pm.getApplicationLabel(info).toString();
+
+                android.graphics.drawable.Drawable icon =
+                    pm.getApplicationIcon(info);
+
+                android.graphics.Bitmap bitmap =
+                    android.graphics.Bitmap.createBitmap(
+                        96, 96,
+                        android.graphics.Bitmap.Config.ARGB_8888
+                    );
+
+                android.graphics.Canvas canvas =
+                    new android.graphics.Canvas(bitmap);
+
+                icon.setBounds(0, 0, 96, 96);
+                icon.draw(canvas);
+
+                java.io.ByteArrayOutputStream out =
+                    new java.io.ByteArrayOutputStream();
+
+                bitmap.compress(
+                    android.graphics.Bitmap.CompressFormat.PNG,
+                    100, out
+                );
+
+                String base64 =
+                    android.util.Base64.encodeToString(
+                        out.toByteArray(),
+                        android.util.Base64.NO_WRAP
+                    );
+
+                org.json.JSONObject result =
+                    new org.json.JSONObject();
+
+                result.put("name", name);
+                result.put("icon",
+                    "data:image/png;base64," + base64);
+
+                return result.toString();
+
+            } catch (Exception e) {
+                return "{}";
+            }
+        }
+
 
         @JavascriptInterface
         public void finishAlert(boolean sound, boolean vibration) {

@@ -275,6 +275,134 @@ select {
     padding:10px;
     border-radius:10px;
 }
+
+* { box-sizing: border-box; }
+
+body {
+    font-size: 13px;
+    overflow: hidden;
+}
+
+header {
+    padding: 12px 14px 8px;
+}
+
+.logo {
+    width: 36px;
+    height: 36px;
+}
+
+header h1 { font-size: 19px; }
+
+main {
+    padding: 8px 14px 12px;
+}
+
+h1 { font-size: 25px; }
+h2 { font-size: 18px; }
+h3 { font-size: 14px; }
+small { font-size: 11px; }
+
+.panel {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+nav {
+    display: grid;
+    grid-template-columns: repeat(4,minmax(0,1fr));
+    gap: 3px;
+    padding: 6px 8px 8px;
+    flex-shrink: 0;
+}
+
+nav button {
+    width: 100%;
+    min-width: 0;
+    height: 54px;
+    padding: 6px 0;
+    gap: 4px;
+    border-radius: 10px;
+    font-size: 10px !important;
+    white-space: nowrap;
+}
+
+nav button svg {
+    width: 21px;
+    height: 21px;
+}
+
+nav button span {
+    font-size: 10px !important;
+    line-height: 13px;
+    white-space: nowrap;
+}
+
+.timer {
+    width: clamp(145px,26dvh,180px);
+    height: clamp(145px,26dvh,180px);
+    margin: 16px auto;
+}
+
+.time { font-size: 38px; }
+
+.primary {
+    padding: 12px;
+    font-size: 14px;
+}
+
+.segments button {
+    font-size: 12px;
+    padding: 9px 3px;
+}
+
+.task {
+    font-size: 13px;
+    border-radius: 12px;
+}
+
+.history-toggle {
+    font-size: 12px;
+}
+
+input {
+    font-size: 13px;
+}
+
+.usage-row {
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px;
+    margin:6px 0;
+    border-radius:12px;
+    font-size:12px;
+}
+
+.app-symbol {
+    width:34px;
+    height:34px;
+    min-width:34px;
+    border-radius:9px;
+    overflow:hidden;
+}
+
+.real-app-icon {
+    width:34px;
+    height:34px;
+    object-fit:contain;
+    display:block;
+}
+
+.usage-row small {
+    font-size:10px;
+    white-space:nowrap;
+}
+
+.usage-row .bar {
+    height:4px;
+}
 </style>
 </head>
 <body>
@@ -601,14 +729,25 @@ function statsPage(){
         <h1 style="color:#91e8ac">${formatTime(total)}</h1>
         <small>${apps.length} ta ilova</small>
         </div>
-        <h3>Eng ko‘p ishlatilgan ilovalar</h3>`;
+        <h3>TOP 5 ilova</h3>`;
 
-        let visible = showAllApps ? apps : apps.slice(0,5);
+        let visible = apps.slice(0,5);
 
         visible.forEach(a=>{
+        let info = {};
+        try {
+            info = JSON.parse(
+                FocusAndroid.getAppInfo(a.package)
+            );
+        } catch(e) {}
+        a.name = info.name || a.name;
+        a.icon = info.icon || '';
+
             h += `<div class="usage-row">
             <div class="app-symbol">
-            ${escapeText(a.name.charAt(0).toUpperCase())}
+            ${a.icon
+        ? '<img class="real-app-icon" src="'+a.icon+'">'
+        : escapeText(a.name.charAt(0).toUpperCase())}
             </div>
             <div style="flex:1;min-width:0">
             <div style="display:flex;justify-content:space-between;gap:8px">
@@ -624,12 +763,7 @@ function statsPage(){
             h += '<div class="panel">Hozircha ma’lumot yo‘q.</div>';
         }
 
-        if(apps.length>5){
-            h += `<button class="history-toggle"
-            onclick="toggleApps()">
-            ${showAllApps?'Yopish ⌃':'Barcha ilovalarni ko‘rish ⌄'}
-            </button>`;
-        }
+        
 
         h += `<button class="history-toggle"
         onclick="render()">↻ Yangilash</button>`;
